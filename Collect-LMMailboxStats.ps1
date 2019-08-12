@@ -92,46 +92,46 @@ Write-Log "Retrieving databases..."
 $AllDatabases = Get-MailboxDatabase | Select Identity,Name, Server
 Write-Log "Found $($AllDatabases.count) databases."
 
-$Data = @()
+$ObjectCollection = @()
 $stopwatch_2 =  [system.diagnostics.stopwatch]::StartNew()
 
 Write-Log "For each database, parsing all mailboxes to get MailboxStatistics, AD properties and Junk information... "
-Foreach ($database in $AllDatabases) {
-    Write-Log "Retrieving mailboxes for database $($database.name)"
-    $MailboxList = @(Get-Mailbox -ResultSize Unlimited -Database $($database.name)| Select PrimarySmtpAddress , ServerName, Alias , DisplayName , OrganizationalUnit , Database , WhenMailboxCreated , ProhibitSendReceiveQuota , UseDatabaseQuotaDefaults , HiddenFromAddressListsEnabled , SingleItemRecoveryEnabled , CustomAttribute14)
-    Write-Log "Found $($MailboxList.count) mailboxes on database $($database.name)"
+Foreach ($ObjectCollectionbase in $AllDatabases) {
+    Write-Log "Retrieving mailboxes for database $($ObjectCollectionbase.name)"
+    $MailboxList = @(Get-Mailbox -ResultSize Unlimited -Database $($ObjectCollectionbase.name)| Select PrimarySmtpAddress , ServerName, Alias , DisplayName , OrganizationalUnit , Database , WhenMailboxCreated , ProhibitSendReceiveQuota , UseDatabaseQuotaDefaults , HiddenFromAddressListsEnabled , SingleItemRecoveryEnabled , CustomAttribute14)
+    Write-Log "Found $($MailboxList.count) mailboxes on database $($ObjectCollectionbase.name)"
     ForEach($Mailbox in $MailboxList){
 		$stopwatch_2.Start()
-		
+
 	    $MailboxStats = Get-MailboxStatistics $Mailbox.Alias | Select LastLogonTime, ItemCount,TotalItemSize
         $MailboxUserAD = Get-User $Mailbox.Alias | Select FirstName , LastName , Company , Department , WhenChanged
 	    $Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
                                                               
-        $Full = New-Object PSObject
+        $SingleObject = New-Object PSObject
 
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.PrimarySmtpAddress -Name "Email Address"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Alias -Name "Alias"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.DisplayName -Name "Display Name"
-		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.FirstName -Name "First Name"
-		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.LastName -Name "Last Name"
-		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Company -Name "Company"
-		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Department -Name "Department"                
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.OrganizationalUnit  -Name "OU"
-		$Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.LastLogonTime  -Name "Last Logon Time"
-		$Full | Add-Member -MemberType NoteProperty -Value ($Mailbox.ServerName).ToUpper() -Name "Server Name"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Database -Name "Database"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.WhenMailboxCreated -Name "When Mailbox Created"
-		$Full | Add-Member -MemberType NoteProperty -Value ($MailboxStats.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
-		$Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.ItemCount  -Name "Item Count"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.ProhibitSendReceiveQuota -Name "Prohibit Send Receive Quota"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.UseDatabaseQuotaDefaults -Name "UseDatabaseQuotaDefaults"
-		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.WhenChanged -Name "Last Modified"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.HiddenFromAddressListsEnabled -Name "Hidden From GAL"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.SingleItemRecoveryEnabled -Name "Single Item Recovery Enabled"
-		$Full | Add-Member -MemberType NoteProperty -Value $Junk.Enabled -Name "Junk Enabled"
-		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.PrimarySmtpAddress -Name "Email Address"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.Alias -Name "Alias"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.DisplayName -Name "Display Name"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.FirstName -Name "First Name"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.LastName -Name "Last Name"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Company -Name "Company"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Department -Name "Department"                
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.OrganizationalUnit  -Name "OU"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxStats.LastLogonTime  -Name "Last Logon Time"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value ($Mailbox.ServerName).ToUpper() -Name "Server Name"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.Database -Name "Database"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.WhenMailboxCreated -Name "When Mailbox Created"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value ($MailboxStats.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxStats.ItemCount  -Name "Item Count"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.ProhibitSendReceiveQuota -Name "Prohibit Send Receive Quota"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.UseDatabaseQuotaDefaults -Name "UseDatabaseQuotaDefaults"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.WhenChanged -Name "Last Modified"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.HiddenFromAddressListsEnabled -Name "Hidden From GAL"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.SingleItemRecoveryEnabled -Name "Single Item Recovery Enabled"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Junk.Enabled -Name "Junk Enabled"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
 
-		$Data += $Full
+		$ObjectCollection += $SingleObject
 
 	}
 	Write-Log "Processed $($MailboxList.count) mailboxes in $($stopwatch_2.elapsed.TotalSeconds) seconds..."
@@ -142,7 +142,7 @@ Foreach ($database in $AllDatabases) {
 $FileName = "MailboxStats_" + $((Get-Date).ToString('MM-dd-yyyy_hh-mm-ss')) + ".csv"
 Write-Log "Done parsing all mailboxes, mailbox stats, and Junk info. Writing into file: $FileName"
 
-$Data | Export-Csv $FileName -NoTypeInformation -Encoding 'UTF8'
+$ObjectCollection | Export-Csv $FileName -NoTypeInformation -Encoding 'UTF8'
 
 Notepad $FileName
 
