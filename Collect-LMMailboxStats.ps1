@@ -72,9 +72,9 @@ function Write-Log
 	
 	try
 	{
-		$DateTime = Get-Date -Format ‘MM-dd-yy HH:mm:ss’
+		$DateTime = Get-Date -Format 'MM-dd-yy HH:mm:ss'
 		$Invocation = "$($MyInvocation.MyCommand.Source | Split-Path -Leaf):$($MyInvocation.ScriptLineNumber)"
-		Add-Content -Value "$DateTime - $Invocation - $Message" -Path "$([environment]::GetEnvironmentVariable('TEMP', 'Machine'))\$LogFileName"
+		Add-Content -Value "$DateTime - $Invocation - $Message" -Path $LogFileName
 		Write-Host $Message
 	}
 	catch
@@ -93,6 +93,7 @@ $AllDatabases = Get-MailboxDatabase | Select Identity,Name, Server
 Write-Log "Found $($AllDatabases.count) databases."
 
 $Data = @()
+$stopwatch_2 =  [system.diagnostics.stopwatch]::StartNew()
 
 Write-Log "For each database, parsing all mailboxes to get MailboxStatistics, AD properties and Junk information... "
 Foreach ($database in $AllDatabases) {
@@ -100,7 +101,8 @@ Foreach ($database in $AllDatabases) {
     $MailboxList = @(Get-Mailbox -ResultSize Unlimited -Database $($database.name)| Select PrimarySmtpAddress , ServerName, Alias , DisplayName , OrganizationalUnit , Database , WhenMailboxCreated , ProhibitSendReceiveQuota , UseDatabaseQuotaDefaults , HiddenFromAddressListsEnabled , SingleItemRecoveryEnabled , CustomAttribute14)
     Write-Log "Found $($MailboxList.count) mailboxes on database $($database.name)"
     ForEach($Mailbox in $MailboxList){
-
+		$stopwatch_2.Start()
+		
 	    $MailboxStats = Get-MailboxStatistics $Mailbox.Alias | Select LastLogonTime, ItemCount,TotalItemSize
         $MailboxUserAD = Get-User $Mailbox.Alias | Select FirstName , LastName , Company , Department , WhenChanged
 	    $Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
@@ -131,7 +133,9 @@ Foreach ($database in $AllDatabases) {
 
 		$Data += $Full
 
-    }
+	}
+	Write-Log "Processed $($MailboxList.count) mailboxes in $($stopwatch_2.elapsed.TotalSeconds) seconds..."
+	$stopwatch_2.Reset()
 }
 
 # [Samdrey] Added hh-mm-ss into file name string to differentiate multiple runs the same day (testing purposes)
@@ -148,5 +152,5 @@ Notepad $FileName
 <# -------------------------- SCRIPT_FOOTER -------------------------- #>
 #Stopping StopWatch and report total elapsed time (TotalSeconds, TotalMilliseconds, TotalMinutes, etc...
 $stopwatch.Stop()
-Write-Host "`n`nThe script took $($StopWatch.Elapsed.TotalSeconds) seconds to execute..."
+Write-Log "`n`nThe script took $($StopWatch.Elapsed.TotalSeconds) seconds to execute..."
 <# -------------------------- /SCRIPT_FOOTER (NOTHING BEYOND THIS POINT) -------------------------- #>
