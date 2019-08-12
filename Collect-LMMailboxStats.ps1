@@ -107,29 +107,29 @@ Foreach ($database in $AllDatabases) {
                                                               
         $Full = New-Object PSObject
 
-        $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.PrimarySmtpAddress -Name "Email Address"
-        $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Alias -Name "Alias"
-        $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.DisplayName -Name "Display Name"
-        $FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.FirstName -Name "First Name"
-        $FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.LastName -Name "Last Name"
-        $FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Company -Name "Company"
-	    $FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Department -Name "Department"                
-        $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.OrganizationalUnit  -Name "OU"
-        $Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.LastLogonTime  -Name "Last Logon Time"
-        $Full | Add-Member -MemberType NoteProperty -Value ($Mailbox.ServerName).ToUpper() -Name "Server Name"
-        $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Database -Name "Database"
-        $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.WhenMailboxCreated -Name "When Mailbox Created"
-        $Full | Add-Member -MemberType NoteProperty -Value ($MailboxStats.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
-        $Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.ItemCount  -Name "Item Count"
-	    $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.ProhibitSendReceiveQuota -Name "Prohibit Send Receive Quota"
-	    $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.UseDatabaseQuotaDefaults -Name "UseDatabaseQuotaDefaults"
-	    $FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.WhenChanged -Name "Last Modified"
-        $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.HiddenFromAddressListsEnabled -Name "Hidden From GAL"
-	    $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.SingleItemRecoveryEnabled -Name "Single Item Recovery Enabled"
-	    $Full | Add-Member -MemberType NoteProperty -Value $Junk.Enabled -Name "Junk Enabled"
-	    $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.PrimarySmtpAddress -Name "Email Address"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Alias -Name "Alias"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.DisplayName -Name "Display Name"
+		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.FirstName -Name "First Name"
+		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.LastName -Name "Last Name"
+		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Company -Name "Company"
+		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Department -Name "Department"                
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.OrganizationalUnit  -Name "OU"
+		$Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.LastLogonTime  -Name "Last Logon Time"
+		$Full | Add-Member -MemberType NoteProperty -Value ($Mailbox.ServerName).ToUpper() -Name "Server Name"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Database -Name "Database"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.WhenMailboxCreated -Name "When Mailbox Created"
+		$Full | Add-Member -MemberType NoteProperty -Value ($MailboxStats.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
+		$Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.ItemCount  -Name "Item Count"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.ProhibitSendReceiveQuota -Name "Prohibit Send Receive Quota"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.UseDatabaseQuotaDefaults -Name "UseDatabaseQuotaDefaults"
+		$FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.WhenChanged -Name "Last Modified"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.HiddenFromAddressListsEnabled -Name "Hidden From GAL"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.SingleItemRecoveryEnabled -Name "Single Item Recovery Enabled"
+		$Full | Add-Member -MemberType NoteProperty -Value $Junk.Enabled -Name "Junk Enabled"
+		$Full | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
 
-    $Data += $Full
+		$Data += $Full
 
     }
 }
