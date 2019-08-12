@@ -103,8 +103,7 @@ Foreach ($database in $AllDatabases) {
 
 	    $MailboxStats = Get-MailboxStatistics $Mailbox.Alias | Select LastLogonTime, ItemCount,TotalItemSize
         $MailboxUserAD = Get-User $Mailbox.Alias | Select FirstName , LastName , Company , Department , WhenChanged
-	    $Server = $Mailbox.ServerName
-	    $Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
+		$Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
 
         $Full = New-Object PSObject
 
@@ -117,7 +116,7 @@ Foreach ($database in $AllDatabases) {
 	    $FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Department -Name "Department"                
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.OrganizationalUnit  -Name "OU"
         $Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.LastLogonTime  -Name "Last Logon Time"
-        $Full | Add-Member -MemberType NoteProperty -Value $Server.ToUpper() -Name "Server Name"
+        $Full | Add-Member -MemberType NoteProperty -Value ($Mailbox.ServerName).ToUpper() -Name "Server Name"
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Database -Name "Database"
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.WhenMailboxCreated -Name "When Mailbox Created"
         $Full | Add-Member -MemberType NoteProperty -Value ($MailboxStats.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
