@@ -65,14 +65,16 @@ function Write-Log
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory)]
-		[string]$Message
+		[string]$Message,
+		[Parameter(Mandatory=$false)]
+		[string]$LogFileName = $ScriptExecutionLogReportFile
 	)
 	
 	try
 	{
 		$DateTime = Get-Date -Format ‘MM-dd-yy HH:mm:ss’
 		$Invocation = "$($MyInvocation.MyCommand.Source | Split-Path -Leaf):$($MyInvocation.ScriptLineNumber)"
-		Add-Content -Value "$DateTime - $Invocation - $Message" -Path "$([environment]::GetEnvironmentVariable('TEMP', 'Machine'))\ScriptLog.log"
+		Add-Content -Value "$DateTime - $Invocation - $Message" -Path "$([environment]::GetEnvironmentVariable('TEMP', 'Machine'))\$LogFileName"
 		Write-Host $Message
 	}
 	catch
@@ -101,9 +103,8 @@ Foreach ($database in $AllDatabases) {
 
 	    $MailboxStats = Get-MailboxStatistics $Mailbox.Alias | Select LastLogonTime, ItemCount,TotalItemSize
         $MailboxUserAD = Get-User $Mailbox.Alias | Select FirstName , LastName , Company , Department , WhenChanged
-	    $Server = $Mailbox.ServerName
 	    $Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
-
+                                                              
         $Full = New-Object PSObject
 
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.PrimarySmtpAddress -Name "Email Address"
@@ -115,7 +116,7 @@ Foreach ($database in $AllDatabases) {
 	    $FUll | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Department -Name "Department"                
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.OrganizationalUnit  -Name "OU"
         $Full | Add-Member -MemberType NoteProperty -Value $MailboxStats.LastLogonTime  -Name "Last Logon Time"
-        $Full | Add-Member -MemberType NoteProperty -Value $Server.ToUpper() -Name "Server Name"
+        $Full | Add-Member -MemberType NoteProperty -Value ($Mailbox.ServerName).ToUpper() -Name "Server Name"
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.Database -Name "Database"
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.WhenMailboxCreated -Name "When Mailbox Created"
         $Full | Add-Member -MemberType NoteProperty -Value ($MailboxStats.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
@@ -129,6 +130,7 @@ Foreach ($database in $AllDatabases) {
 	    $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
 
     $Data += $Full
+
     }
 }
 
