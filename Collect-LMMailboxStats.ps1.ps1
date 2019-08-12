@@ -103,8 +103,8 @@ Foreach ($database in $AllDatabases) {
 
 	    $MailboxStats = Get-MailboxStatistics $Mailbox.Alias | Select LastLogonTime, ItemCount,TotalItemSize
         $MailboxUserAD = Get-User $Mailbox.Alias | Select FirstName , LastName , Company , Department , WhenChanged
-		$Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
-
+	    $Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
+                                                              
         $Full = New-Object PSObject
 
         $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.PrimarySmtpAddress -Name "Email Address"
@@ -130,6 +130,7 @@ Foreach ($database in $AllDatabases) {
 	    $Full | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
 
     $Data += $Full
+
     }
 }
 
