@@ -44,7 +44,7 @@ $ErrorActionPreference = "SilentlyContinue"
 $ScriptVersion = "1.0"
 # Log or report file definition - dumping 2 examples, use both if you need to output a report AND a script execution Log
 # or just use one (delete the unused)
-$CSVReportFile = "$PSScriptRoot\ReportOrLogFile_$(get-date -f yyyy-MM-dd-hh-mm-ss).csv"
+$CSVReportFile = "$PSScriptRoot\MailboxStats_" + $((Get-Date).ToString('MM-dd-yyyy_hh-mm-ss')) + ".csv"
 $ScriptExecutionLogReportFile = "$((Get-Location).Path)\Collect-LMMailboxStats-$(Get-Date -Format 'dd-MMMM-yyyy-hh-mm-ss-tt').txt"
 <# -------------------------- /SCRIPT_HEADER -------------------------- #>
 
@@ -130,16 +130,15 @@ Foreach ($ObjectCollectionbase in $AllDatabases) {
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.SingleItemRecoveryEnabled -Name "Single Item Recovery Enabled"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Junk.Enabled -Name "Junk Enabled"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
-
 		$ObjectCollection += $SingleObject
-
 	}
 	Write-Log "Processed $($MailboxList.count) mailboxes in $($stopwatch_2.elapsed.TotalSeconds) seconds..."
 	$stopwatch_2.Reset()
 }
 
 # [Samdrey] Added hh-mm-ss into file name string to differentiate multiple runs the same day (testing purposes)
-$FileName = "MailboxStats_" + $((Get-Date).ToString('MM-dd-yyyy_hh-mm-ss')) + ".csv"
+#$FileName = "MailboxStats_" + $((Get-Date).ToString('MM-dd-yyyy_hh-mm-ss')) + ".csv"
+$FileName = $CSVReportFile
 Write-Log "Done parsing all mailboxes, mailbox stats, and Junk info. Writing into file: $FileName"
 
 $ObjectCollection | Export-Csv $FileName -NoTypeInformation -Encoding 'UTF8'
