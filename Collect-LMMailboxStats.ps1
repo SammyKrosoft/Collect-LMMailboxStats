@@ -152,5 +152,5 @@ Notepad $FileName
 <# -------------------------- SCRIPT_FOOTER -------------------------- #>
 #Stopping StopWatch and report total elapsed time (TotalSeconds, TotalMilliseconds, TotalMinutes, etc...
 $stopwatch.Stop()
-Write-Log "`n`nThe script took $($StopWatch.Elapsed.TotalSeconds) seconds to execute..."
+Write-Log "The script took $($StopWatch.Elapsed.TotalSeconds) seconds to execute..."
 <# -------------------------- /SCRIPT_FOOTER (NOTHING BEYOND THIS POINT) -------------------------- #>
