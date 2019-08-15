@@ -1,0 +1,17 @@
+08-15-19 08:34:55 - :87 - ************************************************************
+08-15-19 08:34:55 - :88 - *              Starting New Script Session                 *
+08-15-19 08:34:55 - :89 - ************************************************************
+08-15-19 08:34:55 - :91 - Retrieving databases...
+08-15-19 08:34:55 - :93 - Found 5 databases.
+08-15-19 08:34:55 - :98 - For each database, parsing all mailboxes to get MailboxStatistics, AD properties and Junk information... 
+08-15-19 08:34:55 - :100 - Retrieving mailboxes for database First Database
+08-15-19 08:34:55 - :102 - Found 0 mailboxes on database First Database
+08-15-19 08:34:55 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval
+08-15-19 08:35:00 - :144 - Processed 0 mailboxes in 4.6185776 seconds...
+08-15-19 08:35:00 - :100 - Retrieving mailboxes for database DB02
+08-15-19 08:35:02 - :102 - Found 56 mailboxes on database DB02
+08-15-19 08:35:02 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval
+08-15-19 08:35:58 - :144 - Processed 56 mailboxes in 51.7240183 seconds...
+08-15-19 08:35:58 - :100 - Retrieving mailboxes for database DB03
+08-15-19 08:36:00 - :102 - Found 45 mailboxes on database DB03
+08-15-19 08:36:00 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval

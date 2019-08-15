@@ -98,13 +98,14 @@ $stopwatch_2 =  [system.diagnostics.stopwatch]::StartNew()
 Write-Log "For each database, parsing all mailboxes to get MailboxStatistics, AD properties and Junk information... "
 Foreach ($Database in $AllDatabases) {
     Write-Log "Retrieving mailboxes for database $($Database.name)"
-    $MailboxList = @(Get-Mailbox -ResultSize Unlimited -Database $($Database.name)| Select PrimarySmtpAddress , ServerName, Alias , DisplayName , OrganizationalUnit , Database , WhenMailboxCreated , ProhibitSendReceiveQuota , UseDatabaseQuotaDefaults , HiddenFromAddressListsEnabled , SingleItemRecoveryEnabled , CustomAttribute14)
-    Write-Log "Found $($MailboxList.count) mailboxes on database $($Database.name)"
-    ForEach($Mailbox in $MailboxList){
+    $MailboxList = @(Get-Mailbox -ResultSize Unlimited -Database $($Database.name)| Select PrimarySmtpAddress , ServerName, Alias , DisplayName , OrganizationalUnit , Database , WhenMailboxCreated , ProhibitSendReceiveQuota , UseDatabaseQuotaDefaults , HiddenFromAddressListsEnabled , SingleItemRecoveryEnabled , CustomAttribute14,GUID)
+	Write-Log "Found $($MailboxList.count) mailboxes on database $($Database.name)"
+	Write-Log "Getting Stats directly by Database instead of by mailbox to speed up stats retrieval"
+	$MailboxStats = Get-MailboxStatistics -Database $Database.Name | Select LastLogonTime, ItemCount,TotalItemSize,OwnerADGUID
+	ForEach($Mailbox in $MailboxList){
 		$stopwatch_2.Start()
-
-	    $MailboxStats = Get-MailboxStatistics -Database $Database.Name | Select LastLogonTime, ItemCount,TotalItemSize
         $MailboxUserAD = Get-User $Mailbox.Alias | Select FirstName , LastName , Company , Department , WhenChanged
+		$MailboxStatsForThatMailbox = $MailboxStats | ? {$_.OwnerADGUID -eq $Mailbox.GUID}
 		$ErrorActionPreference = "Continue"
 		Try {
 			$Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
@@ -125,12 +126,12 @@ Foreach ($Database in $AllDatabases) {
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Company -Name "Company"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.Department -Name "Department"                
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.OrganizationalUnit  -Name "OU"
-		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxStats.LastLogonTime  -Name "Last Logon Time"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxStatsForThatMailbox.LastLogonTime  -Name "Last Logon Time"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value ($Mailbox.ServerName).ToUpper() -Name "Server Name"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.Database -Name "Database"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.WhenMailboxCreated -Name "When Mailbox Created"
-		$SingleObject | Add-Member -MemberType NoteProperty -Value ($MailboxStats.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
-		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxStats.ItemCount  -Name "Item Count"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value ($MailboxStatsForThatMailbox.TotalItemSize).Value.ToMB() -Name "Mailbox Size In MB"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxStatsForThatMailbox.ItemCount  -Name "Item Count"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.ProhibitSendReceiveQuota -Name "Prohibit Send Receive Quota"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.UseDatabaseQuotaDefaults -Name "UseDatabaseQuotaDefaults"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.WhenChanged -Name "Last Modified"
