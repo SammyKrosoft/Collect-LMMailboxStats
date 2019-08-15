@@ -96,16 +96,24 @@ $ObjectCollection = @()
 $stopwatch_2 =  [system.diagnostics.stopwatch]::StartNew()
 
 Write-Log "For each database, parsing all mailboxes to get MailboxStatistics, AD properties and Junk information... "
-Foreach ($ObjectCollectionbase in $AllDatabases) {
-    Write-Log "Retrieving mailboxes for database $($ObjectCollectionbase.name)"
-    $MailboxList = @(Get-Mailbox -ResultSize Unlimited -Database $($ObjectCollectionbase.name)| Select PrimarySmtpAddress , ServerName, Alias , DisplayName , OrganizationalUnit , Database , WhenMailboxCreated , ProhibitSendReceiveQuota , UseDatabaseQuotaDefaults , HiddenFromAddressListsEnabled , SingleItemRecoveryEnabled , CustomAttribute14)
-    Write-Log "Found $($MailboxList.count) mailboxes on database $($ObjectCollectionbase.name)"
+Foreach ($Database in $AllDatabases) {
+    Write-Log "Retrieving mailboxes for database $($Database.name)"
+    $MailboxList = @(Get-Mailbox -ResultSize Unlimited -Database $($Database.name)| Select PrimarySmtpAddress , ServerName, Alias , DisplayName , OrganizationalUnit , Database , WhenMailboxCreated , ProhibitSendReceiveQuota , UseDatabaseQuotaDefaults , HiddenFromAddressListsEnabled , SingleItemRecoveryEnabled , CustomAttribute14)
+    Write-Log "Found $($MailboxList.count) mailboxes on database $($Database.name)"
     ForEach($Mailbox in $MailboxList){
 		$stopwatch_2.Start()
 
-	    $MailboxStats = Get-MailboxStatistics $Mailbox.Alias | Select LastLogonTime, ItemCount,TotalItemSize
+	    $MailboxStats = Get-MailboxStatistics -Database $Database.Name | Select LastLogonTime, ItemCount,TotalItemSize
         $MailboxUserAD = Get-User $Mailbox.Alias | Select FirstName , LastName , Company , Department , WhenChanged
-	    $Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
+		$ErrorActionPreference = "Continue"
+		Try {
+			$Junk = Get-MailboxJunkEmailConfiguration -Id $Mailbox.Alias | Select Enabled
+			$IsJunkEnabled = $Junk.Enabled
+		}
+		Catch {
+			Write-Log "Unabled to get Junk info - marking as JunkInfoUnavailable in the report"
+			$IsJunkEnabled = "JunkInfoUnavailable"
+		}
                                                               
         $SingleObject = New-Object PSObject
 
@@ -128,7 +136,7 @@ Foreach ($ObjectCollectionbase in $AllDatabases) {
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $MailboxUserAD.WhenChanged -Name "Last Modified"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.HiddenFromAddressListsEnabled -Name "Hidden From GAL"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.SingleItemRecoveryEnabled -Name "Single Item Recovery Enabled"
-		$SingleObject | Add-Member -MemberType NoteProperty -Value $Junk.Enabled -Name "Junk Enabled"
+		$SingleObject | Add-Member -MemberType NoteProperty -Value $IsJunkEnabled -Name "Junk Enabled"
 		$SingleObject | Add-Member -MemberType NoteProperty -Value $Mailbox.CustomAttribute14 -Name "Owner"
 		$ObjectCollection += $SingleObject
 	}
