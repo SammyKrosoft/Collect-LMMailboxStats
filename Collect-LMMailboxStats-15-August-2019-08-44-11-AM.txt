@@ -1,0 +1,28 @@
+08-15-19 08:44:11 - :87 - ************************************************************
+08-15-19 08:44:11 - :88 - *              Starting New Script Session                 *
+08-15-19 08:44:11 - :89 - ************************************************************
+08-15-19 08:44:11 - :91 - Retrieving databases...
+08-15-19 08:44:11 - :93 - Found 5 databases.
+08-15-19 08:44:11 - :98 - For each database, parsing all mailboxes to get MailboxStatistics, AD properties and Junk information... 
+08-15-19 08:44:11 - :100 - Retrieving mailboxes for database First Database
+08-15-19 08:44:12 - :102 - Found 0 mailboxes on database First Database
+08-15-19 08:44:12 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval
+08-15-19 08:44:16 - :144 - Processed 0 mailboxes in 4.8606826 seconds...
+08-15-19 08:44:16 - :100 - Retrieving mailboxes for database DB02
+08-15-19 08:44:18 - :102 - Found 56 mailboxes on database DB02
+08-15-19 08:44:18 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval
+08-15-19 08:45:10 - :144 - Processed 56 mailboxes in 46.6580444 seconds...
+08-15-19 08:45:10 - :100 - Retrieving mailboxes for database DB03
+08-15-19 08:45:11 - :102 - Found 45 mailboxes on database DB03
+08-15-19 08:45:11 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval
+08-15-19 08:45:56 - :144 - Processed 45 mailboxes in 38.5761586 seconds...
+08-15-19 08:45:56 - :100 - Retrieving mailboxes for database DB01
+08-15-19 08:45:57 - :102 - Found 43 mailboxes on database DB01
+08-15-19 08:45:57 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval
+08-15-19 08:46:14 - :144 - Processed 43 mailboxes in 12.0610494 seconds...
+08-15-19 08:46:14 - :100 - Retrieving mailboxes for database DB04
+08-15-19 08:46:15 - :102 - Found 36 mailboxes on database DB04
+08-15-19 08:46:15 - :103 - Getting Stats directly by Database instead of by mailbox to speed up stats retrieval
+08-15-19 08:46:29 - :144 - Processed 36 mailboxes in 9.5163774 seconds...
+08-15-19 08:46:29 - :151 - Done parsing all mailboxes, mailbox stats, and Junk info. Writing into file: C:\scripts\Collect-LMMailboxStats\MailboxStats_08-15-2019_08-44-11.csv
+08-15-19 08:46:29 - :163 - The script took 138.0329378 seconds to execute...
